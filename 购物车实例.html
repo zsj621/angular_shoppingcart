@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车实例</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/angular-csp.css">
+    <link rel="stylesheet" href="css/shop.css">
+</head>
+<body class="content" ng-controller="ctrl">
+<div>
+    <button ng-click="addbook()" class="btn-primary shop-btn">新增<span class="glyphicon glyphicon-plus"></span></button>
+    <input type="text" ng-model="priceData" placeholder="按照价格进行搜索">
+    <table class="table table-bordered shop-table">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>书的名字</th>
+                <th>书的价格</th>
+                <th>书的页码</th>
+                <th>书的数量</th>
+                <th>小计</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="book in dataInfos.books | filter:filterPrice">
+                <td class="text-center">{{$index+1}}</td>
+                <td class="text-center">{{book.name}}</td>
+                <td>{{book.price}}</td>
+                <td>{{book.page}}</td>
+                <td class="text-center"><input type="text" ng-model="book.count"></td>
+                <td class="text-center">{{middleTotal(book)}}</td>
+                <td class="text-center">
+                    <button type="button" data-toggle="modal" data-target="#add_book_modal" class="btn-primary btn" ng-click="modifyBook(book)">修改</button>
+                    <button type="button" class="btn-danger btn" ng-click="dataInfos.books.splice($index,1)">删除</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7" ng-show="dataInfos.books.length" class="money">
+                   <b>总额:{{total()}}; 邮费: {{dataInfos.post}}</b>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!--增加书籍modal-->
+<div class="modal fade" id="add_book_modal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="add_user_modal_title" data-key="">新增书籍信息</h4>
+            </div>
+            <div class="modal-content-modify">
+                <div class="modal-body">
+                    <form class="oper-form" id="user_addoper_form" name="setAddBookForm">
+                        <div class="book-modal-tr">
+                            <div class="query-area" >
+                                <label for="book_name" class="user-title">
+                                    <span class="userMan-left">书&emsp;&emsp;名</span><span class="user-red-star">*</span>
+                                </label>
+                                <input ng-model="bookInfo.name" id="book_name" name="bookname" placeholder="书籍名称必填"   type="text" class="form-control book-input">
+                            </div>
+                        </div>
+                        <div class="book-modal-tr">
+                            <div class="query-area">
+                                <label for="book_price">
+                                    <span class="">书的价格&ensp;</span>
+                                </label>
+                                <input ng-model="bookInfo.price" ng-pattern="/^\d+(\.\d+)?$/" name="bookprice" id="book_price" type="text" class="form-control book-input">
+                                <span class="alert-warning" ng-show="setAddBookForm.bookprice.$invalid">价格可保留小数</span>
+                            </div>
+                        </div>
+                        <div class="book-modal-tr">
+                            <div class="query-area">
+                                <label for="book_page" required class="user-title">
+                                    <span class="">书的页码&ensp;</span>
+                                </label>
+                                <input ng-model="bookInfo.page" ng-pattern="/^\d+$/" name="bookpage" id="book_page" type="text" class="form-control book-input">
+                                <span class="alert-warning" ng-show="setAddBookForm.bookpage.$invalid">书籍页码必须为整数</span>
+                            </div>
+                        </div>
+                        <div class="book-modal-tr">
+                            <div class="query-area">
+                                <label for="book_count">
+                                    <span class="user-phone">书的数量</span><span class="user-red-star">*</span>
+                                </label>
+                                <input ng-model="bookInfo.count" placeholder="书籍数量为必填" name="bookcount" ng-pattern="/^\d+$/"  id="book_count" type="text" class="form-control book-input">
+                                <span class="alert-warning" ng-show="setAddBookForm.bookcount.$invalid">书籍数量必须为整数</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn  btn-default" data-dismiss="modal">取消</button>
+                <button ng-click="addBook()" ng-show="flag == 1" ng-disabled="bookInfo.name == ''||bookInfo.count == ''|| setAddBookForm.bookprice.$invalid || setAddBookForm.bookpage.$invalid || setAddBookForm.bookcount.$invalid" class="btn  btn-primary" >增加</button>
+                <button ng-click="modifyBookInfo()" ng-disabled="bookInfo.name == ''||bookInfo.count == ''|| setAddBookForm.bookprice.$invalid || setAddBookForm.bookpage.$invalid || setAddBookForm.bookcount.$invalid" class="btn  btn-primary" ng-show="flag == 0" >修改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/angular.js"></script>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/shop.js"></script>
+</body>
+</html>
